@@ -1,0 +1,88 @@
+version: "3"
+
+services:
+  mongodb:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=username
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - mongodb-data:/data/db
+
+  userservice:
+    image: userservice:latest
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_USERNAME=username
+      - MONGO_PASSWORD=password
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - MONGO_DB=eshopdb
+
+  productservice:
+    image: productservice:latest
+    restart: always
+    ports:
+      - "5001:5000"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_USERNAME=username
+      - MONGO_PASSWORD=password
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - MONGO_DB=eshopdb
+
+  orderservice:
+    image: orderservice:latest
+    restart: always
+    ports:
+      - "5004:5000"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_USERNAME=username
+      - MONGO_PASSWORD=password
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - MONGO_DB=eshopdb
+
+  walletservice:
+    image: walletservice:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=walletdb
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=postgresql
+    ports:
+      - 5003:5000
+
+  paymentservice:
+    image: paymentservice:latest
+    restart: always
+    ports:
+      - 5002:5000
+
+  postgresql:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=walletdb
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+
+volumes:
+  mongodb-data:
+  postgresql-data:
+
