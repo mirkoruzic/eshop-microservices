@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: walletservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: walletservice
+  template:
+    metadata:
+      labels:
+        app: walletservice
+    spec:
+      containers:
+        - name: walletservice
+          image: walletservice:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 200m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
