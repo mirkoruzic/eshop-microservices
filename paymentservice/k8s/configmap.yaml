@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payment-config
+data:
+  ORDER_SERVICE_HOST: orderservice-service
+  PRODUCT_SERVICE_HOST: productservice-service
+  WALLET_SERVICE_HOST: walletservice-service.wallet
+
+

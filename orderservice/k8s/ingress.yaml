@@ -1,0 +1,52 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: microservice-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+    - hosts:
+      - "*.eshop.com"
+      secretName: tls-secret
+  rules:
+    - host: orders.eshop.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: orderservice-service
+                port:
+                  number: 5000
+    - host: users.eshop.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: userservice-service
+                port:
+                  number: 5000
+    - host: products.eshop.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: productservice-service
+                port:
+                  number: 5000
+    - host: payments.eshop.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: paymentservice-service
+                port:
+                  number: 5000
