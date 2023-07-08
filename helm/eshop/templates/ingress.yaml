@@ -1,0 +1,52 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: eshop-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+    - hosts:
+        - {{ quote .Values.domains }}
+      secretName:  {{ quote .Values.tls }}
+  rules:
+    - host: {{ printf "%s.eshop.com" .Values.orderservice.subdomain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ printf "%s-service" .Values.orderservice.service_name }}
+                port:
+                  number: {{ .Values.orderservice.port }}
+    - host: {{ printf "%s.eshop.com" .Values.userservice.subdomain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ printf "%s-service" .Values.userservice.service_name }}
+                port:
+                  number:  {{ .Values.userservice.port }}
+    - host: {{ printf "%s.eshop.com" .Values.paymentservice.subdomain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ printf "%s-service" .Values.paymentservice.service_name }}
+                port:
+                  number: {{ .Values.paymentservice.port }}
+    - host: {{ printf "%s.eshop.com" .Values.productservice.subdomain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ printf "%s-service" .Values.productservice.service_name }}
+                port:
+                  number: {{ .Values.productservice.port }}

@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wallet-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  tls:
+    - hosts:
+        - {{ quote .Values.domains }}
+      secretName: wallet-ssl
+  rules:
+    - host: {{ printf "%s.eshop.com" .Values.walletservice.subdomain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ printf "%s-service" .Values.walletservice.service_name }}
+                port:
+                  number: {{ .Values.walletservice.port }}

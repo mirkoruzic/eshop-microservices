@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.db_name }}
+spec:
+  replicas: 1
+  serviceName: {{ .Values.db_name }}
+  selector:
+    matchLabels:
+      app: {{ .Values.db_name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.db_name }}
+    spec:
+      containers:
+        - name: {{ .Values.db_name }}
+          image: {{ .Values.image }}
+          ports:
+            - containerPort: {{ .Values.port }}
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+          volumeMounts:
+            - name: postgresql-data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: postgresql-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.storage }}

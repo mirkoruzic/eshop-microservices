@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.service_name }}
+spec:
+  replicas: {{ .Values.replica_set }}
+  selector:
+    matchLabels:
+      app:  {{ .Values.service_name }}
+  template:
+    metadata:
+      labels:
+        app:  {{ .Values.service_name }}
+    spec:
+      containers:
+        - name:  {{ .Values.service_name }}
+          image: {{ printf "%s:%s" .Values.service_name .Values.image }}
+          imagePullPolicy: Never
+          ports:
+            - containerPort: {{ .Values.port }}
+          envFrom:
+            - secretRef:
+                name: mongo-secret
+          resources:
+            limits:
+              cpu: {{ .Values.cpu_limits }}
+              memory: {{ .Values.memory_limits }}
+            requests:
+              cpu: {{ .Values.cpu_requests }}
+              memory: {{ .Values.memory_requests }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
